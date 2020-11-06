@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.smbms.dao.IUserDao">
+    <!--User getUser(@Param("userName") String userName, @Param("pwd") String pwd);-->
+    <select id="getUser" resultType="cn.smbms.pojo.User">
+			SELECT * FROM smbms_user WHERE userCode= #{userName} AND userPassword=#{pwd}
+	</select>
+    <!--  List<User> getUserList();-->
+    <select id="getUserList" resultType="cn.smbms.pojo.User">
+        SELECT * FROM smbms_user,smbms_role r WHERE userRole=r.id
+	</select>
+    <!-- List<User> getUserName(String  userName);-->
+    <select id="getUserName" resultType="cn.smbms.pojo.User">
+        SELECT * FROM smbms_user WHERE userName LIKE  concat("%",#{userName},"%")
+    </select>
+
+    <!--User getUserAssignName(String userName);-->
+    <select id="getUserAssignName" resultType="User">
+         SELECT * FROM smbms_user u,`smbms_role` r WHERE u.`userRole`=r.id AND userName =  #{userName}
+    </select>
+
+    <!--    User getUpdUserName(String UserName);-->
+    <select id="getUpdUserName" resultType="User">
+        select * from  smbms_user u,smbms_role r where u.userRole=r.id and userCode= #{userCode}
+    </select>
+
+    <!--//修改用户点击保存
+    Integer getUpdUser(User user);-->
+    <update id="getUpdUser">
+        UPDATE smbms_user SET
+	userName= #{userName},
+	gender = #{gender},
+	birthday = #{birthday},
+	phone = #{phone},
+	address= #{address},
+	userRole= #{userRole}
+    WHERE userCode=#{userCode}
+    </update>
+    <!--   //验证userCoed唯一
+    User getUserCode(String userCode);-->
+    <select id="getUserCode" resultType="Integer">
+        select  count(1) from smbms_user where userCode=#{userCoed}
+    </select>
+
+    <!-- //添加用户
+    Integer getAddUser(User user);-->
+    <insert id="getAddUser">
+            INSERT INTO smbms_user(userCode,userName,userPassword,gender,birthday,phone,address,userRole,creationDate)
+       VALUES (#{userCode},#{userName},#{userPassword},#{gender},#{birthday},#{phone},#{address},#{userRole},#{creationDate})
+    </insert>
+
+
+    <!-- //删除
+    Integer getDelUser(String userCode);-->
+    <delete id="getDelUser">
+       DELETE FROM smbms_user WHERE userCode = #{userCode}
+    </delete>
+
+    <!--//修改密码
+    Integer getUpdPssword(String userCode,String userPassword);-->
+    <update id="getUpdPassword">
+       UPDATE smbms_user SET
+       userPassword=#{userPassword}
+
+       WHERE userCode=#{userCode}
+
+    </update>
+
+    <!--//判断旧密码
+        Integer getPwdContrast(String userCode,String userPassword);-->
+    <select id="getPwdContrast" resultType="Integer">
+               SELECT COUNT(1) FROM smbms_user WHERE userPassword=${userPassword} AND userCode=#{userCode}
+    </select>
+
+    <!--分页  List<User> getAll();-->
+    <select id="getAll" resultType="User">
+        select  * from smbms_user
+    </select>
+</mapper>

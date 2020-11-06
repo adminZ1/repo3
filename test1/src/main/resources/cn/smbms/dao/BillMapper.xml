@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.smbms.dao.IBill">
+    <!-- //查询全部
+        List<bill> getBillList();-->
+    <resultMap id="providerAndBill" type="Bill">
+        <id property="id" column="id"></id>
+        <result property="billCode" column="billCode"></result>
+        <result property="productName" column="productName"></result>
+        <result property="productDesc" column="productDesc"></result>
+        <result property="productUnit" column="productUnit"></result>
+        <result property="productCount" column="productCount"></result>
+        <result property="totalPrice" column="totalPrice"></result>
+        <result property="creationDate" column="creationDate"></result>
+        <result property="isPayment" column="isPayment"></result>
+        <result property="createdBy" column="createdBy"></result>
+        <result property="modifyDate" column="modifyDate"></result>
+        <result property="providerId" column="providerId"></result>
+        <association property="provider" javaType="Provider">
+            <id property="id" column="pid"></id>
+            <result property="proCode" column="proCode"></result>
+            <result property="proName" column="proName"></result>
+            <result property="proDesc" column="proDesc"></result>
+            <result property="proContact" column="proContact"></result>
+            <result property="proPhone" column="proPhone"></result>
+            <result property="proAddress" column="proAddress"></result>
+            <result property="proFax" column="proFax"></result>
+            <result property="createdBy" column="p_createdBy"></result>
+            <result property="creationDate" column="p_creationDate"></result>
+            <result property="modifyBy" column="p_modifyBy"></result>
+            <result property="modifyDate" column="p_modifyDate"></result>
+        </association>
+    </resultMap>
+    <select id="getBillList" resultMap="providerAndBill">
+          SELECT * FROM smbms_bill b,`smbms_provider` p WHERE b.providerid=p.`id`
+    </select>
+
+    <!-- //指定查询
+        List<Bill> getBillCondition(Bill bill,Integer pageNum,Integer pageSize);
+    -->
+    <select id="getBillCondition" resultMap="providerAndBill">
+        SELECT b.*
+        ,p.id as pid,p.proName,p.proDesc,p.proContact,p.proPhone,p.proAddress ,p.proFax ,p.createdBy as
+        p_createdBy,p.creationDate as p_creationDate
+        , p.modifyBy as p_modifyBy,p.modifyDate as p_modifyDate
+        FROM smbms_bill b,smbms_provider p
+        where b.providerId=p.id
+        <if test="productName != null and productName != '' ">
+            AND productName LIKE '%' #{productName} '%'
+        </if>
+        <if test="isPayment != null and isPayment != '' ">
+            and isPayment = #{isPayment}
+        </if>
+        <if test="provider.proName !=null and provider.proName != ''">
+            AND proName = #{provider.proName}
+        </if>
+    </select>
+
+    <!--  //查看信息
+    Bill getBill(String billCode);-->
+    <select id="getBill" resultMap="providerAndBill">
+               SELECT b.*
+        ,p.id as pid,p.proName,p.proDesc,p.proContact,p.proPhone,p.proAddress ,p.proFax ,p.createdBy as
+        p_createdBy,p.creationDate as p_creationDate
+        , p.modifyBy as p_modifyBy,p.modifyDate as p_modifyDate
+        FROM smbms_bill b,smbms_provider p
+        where b.providerId=p.id
+        and billCode = #{billCode}
+    </select>
+
+    <!--  //修改进入
+    Integer billUpdate(String billCode);-->
+    <select id="billUpdate" resultMap="providerAndBill">
+               SELECT b.*
+        ,p.id as pid,p.proName,p.proDesc,p.proContact,p.proPhone,p.proAddress ,p.proFax ,p.createdBy as
+        p_createdBy,p.creationDate as p_creationDate
+        , p.modifyBy as p_modifyBy,p.modifyDate as p_modifyDate
+        FROM smbms_bill b,smbms_provider p
+        where b.providerId=p.id
+        and billCode = #{billCode}
+    </select>
+</mapper>
